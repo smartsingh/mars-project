@@ -12,8 +12,6 @@ def scrape():
     #Setup scraper
     url = "https://mars.nasa.gov/news"
 
-    get_ipython().system('which chromedriver')
-
     executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
     browser = Browser('chrome', **executable_path, headless=False)
 
@@ -78,8 +76,8 @@ def scrape():
 
     #clean up table
     df.set_index(0)
-    df.columns = ['','']
-    mars_facts = df.to_html()
+    df.columns = ['description','value']
+    mars_facts = df.to_html(index=False)
     mars_facts.replace('\n', '')
 
     mars_scrape['mars_facts'] = mars_facts
@@ -98,7 +96,7 @@ def scrape():
         html = browser.html
         soup = bs(html, 'html.parser')
         urls = soup.find('div', class_="downloads").find_all('li')
-        img_url = urls[1].a['href']
+        img_url = urls[0].a['href']
         title = soup.find('title').text.split(' Enhanced')[0]
         hemisphere_image_urls.append({'title':title,'img_url':img_url})
         browser.click_link_by_partial_text('Back')
